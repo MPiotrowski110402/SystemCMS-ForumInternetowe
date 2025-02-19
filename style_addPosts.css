@@ -1,0 +1,126 @@
+/* Stylizacja kontenera formularza */
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #f3f3f3;
+}
+
+/* Formularz dodawania posta */
+.post-form-container {
+    background: white;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    max-width: 600px;
+    width: 100%;
+}
+
+.post-form-container h3 {
+    font-size: 1.8rem;
+    color: #333;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+label {
+    display: block;
+    font-size: 1rem;
+    color: #333;
+    margin: 10px 0 5px;
+}
+
+input[type="text"], textarea, input[type="file"] {
+    width: 100%;
+    padding: 10px;
+    font-size: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    background-color: #fafafa;
+    box-sizing: border-box;
+}
+
+textarea {
+    resize: vertical;
+}
+
+input[type="submit"] {
+    background: #0073e6;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    font-size: 1rem;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s;
+    width: 100%;
+}
+
+input[type="submit"]:hover {
+    background: #005bb5;
+}
+
+/* Stylizacja dla błędów lub pustych pól */
+input:invalid, textarea:invalid {
+    border-color: #0077e6;
+}
+
+input:focus, textarea:focus {
+    outline: none;
+    border-color: #0073e6;
+}
+
+/* Dodatkowe marginesy w formularzu */
+textarea {
+    margin-bottom: 20px;
+}
+
+input[type="file"] {
+    background-color: #f0f0f0;
+}
+
+@media screen and (max-width: 600px) {
+    .post-form-container {
+        padding: 20px;
+    }
+
+    .post-form-container h3 {
+        font-size: 1.5rem;
+    }
+}
+/* Styl dla label */
+label[for="category"] {
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 8px;
+    color: #333;
+}
+
+/* Styl dla select */
+#category {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+    background-color: #fff;
+    color: #333;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    margin-bottom: 15px;
+}
+
+/* Stylizacja select na hover i focus */
+#category:hover, #category:focus {
+    border-color: #0e2ac9;
+    box-shadow: 0 0 5px rgba(4, 67, 150, 0.2);
+    outline: none;
+}
+
+/* Stylizacja dla opcji */
+#category option {
+    font-size: 16px;
+    padding: 10px;
+}
+

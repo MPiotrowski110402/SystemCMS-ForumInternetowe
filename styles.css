@@ -1,0 +1,482 @@
+/* Resetowanie domyślnych stylów */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Arial', sans-serif;
+}
+
+body {
+    background-color: #f4f4f4;
+    color: #333;
+    line-height: 1.6;
+}
+
+.container {
+    width: 90%;
+    max-width: 1200px;
+    margin: auto;
+}
+
+/* Nawigacja */
+.navbar, header {
+    background: #0073e6;
+    color: white;
+    padding: 15px 0;
+    text-align: center;
+}
+
+.navbar a, header a {
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+    margin: 0 15px;
+    transition: color 0.3s;
+}
+
+.navbar a:hover, header a:hover {
+    color: #ffdd57;
+}
+
+/* Posty */
+.post-container, .threads {
+    background: white;
+    padding: 20px;
+    margin: 20px auto;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+
+.post-header {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    border-bottom: 2px solid #ddd;
+    padding-bottom: 10px;
+    margin-bottom: 10px;
+}
+
+.user-avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.post-title {
+    font-size: 1.8rem;
+    color: #0073e6;
+    margin: 10px 0;
+}
+
+.post-content {
+    font-size: 1.1rem;
+    color: #555;
+}
+
+.post-footer {
+    margin-top: 15px;
+    font-size: 0.9rem;
+    color: #777;
+    display: flex;
+    justify-content: space-between;
+}
+
+/* Lista wątków */
+.thread-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.thread-item {
+    background: #fff;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s;
+}
+
+.thread-item:hover {
+    transform: scale(1.02);
+}
+
+.thread-item a {
+    text-decoration: none;
+    font-size: 1.2rem;
+    color: #0073e6;
+}
+
+/* Stopka */
+.footer {
+    background: #0073e6;
+    color: white;
+    text-align: center;
+    padding: 15px 0;
+    margin-top: 20px;
+}
+/* Styl dla każdego wątku */
+.thread-item {
+    background-color: #f9f9f9;
+    border: 2px solid #ddd;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease-in-out;
+}
+
+.thread-item:hover {
+    transform: scale(1.02);
+}
+
+/* Nagłówek wątku */
+.thread-header {
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 10px;
+    margin-bottom: 10px;
+}
+
+.thread-title {
+    font-size: 22px;
+    font-weight: bold;
+    margin: 0;
+}
+
+.thread-title a {
+    text-decoration: none;
+    color: #333;
+}
+
+.thread-title a:hover {
+    color: #007BFF;
+}
+
+/* Informacje o autorze i dacie */
+.thread-meta {
+    font-size: 14px;
+    color: #666;
+}
+
+/* Opis wątku */
+.thread-body {
+    font-size: 16px;
+    color: #444;
+    margin-bottom: 10px;
+}
+
+/* Stopka wątku (statystyki) */
+.thread-footer {
+    display: flex;
+    justify-content: space-between;
+    font-size: 14px;
+    font-weight: bold;
+    color: #555;
+}
+
+.thread-views {
+    color: #ff9800;
+}
+
+.thread-likes {
+    color: #e91e63;
+}
+/* Styl głównego kontenera posta */
+.post-container {
+    background-color: #ffffff;
+    border: 2px solid #ddd;
+    border-radius: 12px;
+    padding: 25px;
+    margin: 30px auto;
+    max-width: 800px;
+    box-shadow: 3px 3px 15px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease-in-out;
+}
+
+.post-container:hover {
+    transform: scale(1.02);
+}
+
+/* Nagłówek posta */
+.post-header {
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 15px;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+/* Informacje o użytkowniku */
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.user-avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    border: 2px solid #ddd;
+}
+
+.user-details {
+    display: flex;
+    flex-direction: column;
+}
+
+.username {
+    font-size: 18px;
+    font-weight: bold;
+    color: #333;
+}
+
+.post-date {
+    font-size: 14px;
+    color: #666;
+}
+
+/* Tytuł posta */
+.post-title {
+    font-size: 24px;
+    font-weight: bold;
+    color: #222;
+    margin-top: 5px;
+}
+
+/* Treść posta */
+.post-body {
+    font-size: 18px;
+    color: #444;
+    line-height: 1.6;
+    padding: 15px 0;
+}
+
+/* Stopka posta */
+.post-footer {
+    border-top: 1px solid #ddd;
+    padding-top: 15px;
+    display: flex;
+    justify-content: space-between;
+    font-size: 16px;
+    font-weight: bold;
+    color: #555;
+}
+
+.post-views {
+    color: #ff9800;
+}
+
+.post-likes {
+    color: #e91e63;
+}
+
+/* Cała sekcja komentarzy */
+.comments-section {
+    background-color: #f9f9f9;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    margin-top: 20px; /* Dodaj przestrzeń między postem a komentarzami */
+}
+
+/* Nagłówek sekcji komentarzy */
+.comments-section h2 {
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+/* Lista komentarzy */
+.comments-list {
+    margin-top: 10px;
+}
+
+/* Każdy pojedynczy komentarz */
+.comment {
+    background-color: #fff;
+    padding: 15px;
+    margin-bottom: 15px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    display: flex;
+    flex-direction: column;
+}
+
+/* Nagłówek komentarza (avatar i nazwa użytkownika) */
+.comment-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+/* Avatar użytkownika */
+.comment-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin-right: 10px;
+    object-fit: cover; /* Zapewnia odpowiednie dopasowanie obrazu */
+}
+
+/* Nazwa użytkownika */
+.comment-username {
+    font-weight: bold;
+    color: #333;
+    font-size: 16px;
+}
+
+/* Treść komentarza */
+.comment-body {
+    font-size: 14px;
+    color: #555;
+    line-height: 1.6;
+}
+
+/* Stopka komentarza (data) */
+.comment-footer {
+    margin-top: 10px;
+    font-size: 12px;
+    color: #888;
+}
+
+/* Formularz dodawania komentarza */
+.comment-form {
+    margin-top: 30px;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Pole tekstowe do komentarza */
+.comment-text {
+    padding: 10px;
+    width: 100%;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    min-height: 80px;
+    resize: vertical; /* Umożliwia zmianę rozmiaru */
+    margin-bottom: 10px;
+}
+
+/* Przycisk do wysyłania komentarza */
+.submit-comment-btn {
+    padding: 10px 15px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    width: 100%;
+}
+
+.submit-comment-btn:hover {
+    background-color: #0056b3; /* Efekt przycisku po najechaniu */
+}
+.category-container {
+    background-color: #ffffff;
+    border: 2px solid #ddd;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    text-align: center;
+}
+
+/* Nagłówek kategorii */
+.category-container h2 {
+    font-size: 20px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+/* Lista kategorii */
+.category-list {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.category-list li {
+    padding: 10px;
+    margin: 5px;
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    text-align: center;
+    transition: background-color 0.3s ease;
+    flex-grow: 1;
+    flex-basis: calc(25% - 10px); /* Dla 4 kategorii w rzędzie, dostosuj według potrzeb */
+}
+
+.category-list li:hover {
+    background-color: #0073e6;
+}
+
+.category-list li a {
+    color: #333;
+    text-decoration: none;
+    text-align: center;
+    font-size: 16px;
+    display: block;
+    width: 100%;
+}
+
+.category-list li a:hover {
+    color: white;
+}
+.form-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%; /* Możesz zmienić szerokość kontenera, jak chcesz */
+    max-width: 1200px;
+    margin: 0 auto; /* Wycentruje formularz */
+  }
+  
+  .post-form, .search-form {
+    display: flex;
+    align-items: center;
+  }
+  
+  .submit-btn {
+    background-color: #0073e6;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .submit-btn:hover {
+    background-color: #005bb5;
+  }
+  
+  .left-btn {
+    margin-right: 20px; /* Odstęp między przyciskiem a polem wyszukiwania */
+  }
+  
+  .search-input {
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-right: 10px; /* Odstęp między inputem a przyciskiem */
+  }
+  
+  .search-input:focus {
+    outline: none;
+    border-color: #0073e6; /* Kolor ramki przy focussie */
+  }
+  
