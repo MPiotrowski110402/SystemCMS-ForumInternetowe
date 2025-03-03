@@ -3,23 +3,47 @@
     include('../connect_db.php');
     
     global $conn;
-    $id = $_GET["id"];
-    $sql = "SELECT * FROM users WHERE id = $id";
-    $result = mysqli_query($conn, $sql);
+    $id = isset($_GET["id"]) ? (int)$_GET['id'] : 0;
+    if($id <= 0){
+        die("nieprawidłowy identyfikator");
+    }
+    $sql = "SELECT * FROM users WHERE id = ?";
+    $stmt = mysqli_prepare($conn, $sql);
+    if (!$stmt) {
+        die("Błąd zapytania: ". mysqli_error($conn));
+    }
+    mysqli_stmt_bind_param($stmt, "i", $id);
+    mysqli_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
     $row = mysqli_fetch_assoc($result);
+    if(!$row){
+        die("Nie znaleziono użytkownika o podanym identyfikatorze");
+    }
     $username = $row['username'];
     $email = $row['email'];
     $role = $row['role'];
+    
     echo $username . ' ' . $email . ' ' .$id;
 
 
     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         if (isset($_POST['login']) && isset($_POST['role']) && isset($_POST['email'])){
-        $new_login = $_POST['login'];
-        $new_role = $_POST['role'];
-        $new_email = $_POST['email'];
-        $sql = "UPDATE users SET username = '$new_login', role = '$new_role', email = '$new_email' WHERE id = $id";
-        mysqli_query($conn, $sql);
+
+
+        $new_login = htmlspecialchars(trim($_POST['login']));
+        $new_role = htmlspecialchars(trim($_POST['role']));
+        $new_email = filter_var(trim($_POST['email']), FILTER_SANITIZE_EMAIL);
+        if(!filter_var($new_email, FILTER_VALIDATE_EMAIL)){
+            die("Nieprawidłowy email");
+        }
+        $sql = "UPDATE users SET username = ?, role = ?, email = ? WHERE id = ?";
+        $stmt = mysqli_prepare($conn, $sql);
+        if(!$stmt) {
+            die("Błąd zapytania: ". mysqli_error($conn));
+        }
+        mysqli_stmt_bind_param($stmt, "sssi", $new_login, $new_role, $new_email, $id);
+        mysqli_stmt_execute($stmt);
+
         header("Location: adminPanel.html");
         exit();
         }

@@ -9,7 +9,7 @@
     }
     function showPost(){
         global $conn;
-        $id_post = $_GET['id'];
+        $id_post = isset($_GET['id']) ? (int)$_GET['id']:0;
         likesCount($id_post);
         $sql = "SELECT
                 LENGTH(posts.content) AS content_length, 
@@ -24,11 +24,13 @@
                 FROM posts 
                 INNER JOIN users 
                 ON posts.user_id = users.id
-                WHERE posts.id = $id_post ";
-        $result = mysqli_query($conn,$sql);
+                WHERE posts.id = ? ";
+        $stmt = mysqli_prepare($conn, $sql);
+        mysqli_stmt_bind_param($stmt, "i", $id_post);
+        mysqli_stmt_execute($stmt);
+        $result = mysqli_stmt_get_result($stmt);
         if(mysqli_num_rows($result)>0){
             $row = mysqli_fetch_assoc($result);
-
             $id = $row['id'];
             $title = htmlspecialchars($row['title']);
             $content = htmlspecialchars(substr($row['content'], 0, 1000));
@@ -103,7 +105,7 @@
             posts.id,
             posts.title,
             posts.content, 
-            category.category,  -- Kolumna z kategorią
+            category.category,  
             posts.created_at, 
             posts.views_count, 
             posts.likes_count,
@@ -112,7 +114,7 @@
             INNER JOIN users ON posts.user_id = users.id
             INNER JOIN category ON posts.category_id = category.id
             ORDER BY posts.created_at DESC";
-
+        $stmt = mysqli_prepare($conn, $sql);
 
         } else {
             $sql = "SELECT
@@ -120,19 +122,22 @@
                     posts.id,
                     posts.title,
                     posts.content, 
-                    category.category,  -- Kolumna z kategorią
+                    category.category,  
                     posts.created_at, 
                     posts.views_count, 
                     posts.likes_count,
                     users.username
                     FROM posts
                     INNER JOIN users ON posts.user_id = users.id
-                    INNER JOIN category ON posts.category_id = category.id  -- Poprawione łączenie tabel
-                    WHERE posts.category_id = '".$category."'
+                    INNER JOIN category ON posts.category_id = category.id  
+                    WHERE posts.category_id = ?
                     ORDER BY posts.created_at DESC";
+            $stmt = mysqli_prepare($conn, $sql);
+            mysqli_stmt_bind_param($stmt, "i", $category);
         }
         
-        $result = mysqli_query($conn,$sql);
+        mysqli_stmt_execute($stmt);
+        $result = mysqli_stmt_get_result($stmt);
         if(mysqli_num_rows($result)>0){
             while($row = mysqli_fetch_assoc($result)){
                 $id = $row['id'];
@@ -185,7 +190,7 @@
     }
     function commandList(){
         global $conn;
-        $id_post = $_GET['id'];
+        $id_post = isset($_GET['id']) ? (int)$_GET['id'] : 0;
         $sql = 
         "SELECT 
         comments.content,
@@ -194,10 +199,12 @@
         users.profile_picture
         FROM comments
         INNER JOIN users ON comments.user_id = users.id
-        WHERE comments.post_id = $id_post
+        WHERE comments.post_id = ?
         ORDER BY comments.created_at DESC";
-
-        $result = mysqli_query($conn, $sql);
+        $stmt = mysqli_prepare($conn, $sql);
+        mysqli_stmt_bind_param($stmt, "i", $id_post);
+        mysqli_stmt_execute($stmt);
+        $result = mysqli_stmt_get_result($stmt);
         if(mysqli_num_rows($result)>0){
             while($row = mysqli_fetch_assoc($result)){
             $CommantsContent = $row['content'];
@@ -225,15 +232,23 @@
     function addCommants(){
         global $conn;
         if(isset($_SESSION['logined']) && $_SESSION['logined'] === true){
-            $user_id = $_SESSION['user_id'];
-            $id_post = $_GET['id'];
-            $commands_content = $_POST['commants_content'];
+            $user_id = isset($_SESSION['user_id']) ? (int)$_SESSION['user_id'] :0;
+            $id_post = isset($_GET['id']) ? (int)$_GET['id'] :0;
+            $commands_content = isset($_POST['commants_content']) ? htmlspecialchars(trim($_POST['commants_content'])) : '';
+            if (empty($commands_content)) {
+                echo "Treść komentarza nie może być pusta";
+                return; 
+            }
+
+            $command = mysqli_real_escape_string($conn, $commands_content);
             $sql = "INSERT INTO comments (post_id, user_id, content, created_at) 
-            VALUES ($id_post, $user_id, '" . mysqli_real_escape_string($conn, $commands_content) . "', NOW())";
-            if(!empty($commands_content)){
-                mysqli_query($conn,$sql);
+            VALUES (? , ? , ? , NOW())";
+            $stmt = mysqli_prepare($conn, $sql);
+            mysqli_stmt_bind_param($stmt, "iis", $id_post, $user_id, $command);
+            $result = mysqli_stmt_execute($stmt);
+            if($result){
                 header("Location: " . $_SERVER['PHP_SELF'] . "?id=" . $id_post);
-                exit();
+                exit(); 
             }else{
                 echo "Treść komentarza nie może być pusta";
             }
@@ -242,20 +257,31 @@
             exit();
         }
     }
+
+
     function likesPost(){
         global $conn;
         if(isset($_SESSION['logined']) && $_SESSION['logined'] === true){
             if(isset($_POST['like_btn'])){
-                $user_id = $_SESSION['user_id'];
-                $post_id = $_GET['id'];
+                $user_id = isset($_SESSION['user_id']) ? (int)$_SESSION['user_id'] :0;
+                $post_id = isset($_GET['id']) ? (int)$_GET['id'] :0;
                 $sql = "SELECT id
-                    FROM likes WHERE likes.post_id = $post_id AND likes.user_id = $user_id";
-                $result = mysqli_query($conn, $sql);
+                    FROM likes WHERE likes.post_id = ? AND likes.user_id = ?";
+                $stmt = mysqli_prepare($conn, $sql);
+                mysqli_stmt_bind_param($stmt, "ii", $post_id, $user_id);
+                mysqli_stmt_execute($stmt);
+                $result = mysqli_stmt_get_result($stmt);
                 if(mysqli_num_rows($result)>0){
                     $row = mysqli_fetch_assoc($result);
-                    mysqli_query($conn, "DELETE FROM likes WHERE  likes.post_id = $post_id AND likes.user_id = $user_id");
+                    $sql = "DELETE FROM likes WHERE  likes.post_id = ? AND likes.user_id = ?";
+                    $stmt = mysqli_prepare($conn,$sql);
+                    mysqli_stmt_bind_param($stmt, "ii", $post_id, $user_id);
+                    mysqli_stmt_execute($stmt);
                 }else{
-                    mysqli_query($conn, "INSERT INTO likes (post_id, user_id) VALUES ($post_id, $user_id)");
+                    $sql = "INSERT INTO likes (post_id, user_id) VALUES (?, ?)";
+                    $stmt = mysqli_prepare($conn, $sql);
+                    mysqli_stmt_bind_param($stmt, "ii", $post_id, $user_id);
+                    mysqli_stmt_execute($stmt);
                 }
                 likesCount($post_id);
                 header("Location: ". $_SERVER['PHP_SELF']. "?id=". $post_id);
@@ -267,12 +293,17 @@
     }
     function likesCount($post_id){
         global $conn;
-        $sql = "SELECT COUNT(*) as likes_count FROM likes WHERE post_id = $post_id";
-        $result = mysqli_query($conn, $sql);
+        $sql = "SELECT COUNT(*) as likes_count FROM likes WHERE post_id = ?";
+        $stmt = mysqli_prepare($conn, $sql);
+        mysqli_stmt_bind_param($stmt, "i", $post_id);
+        mysqli_stmt_execute($stmt);
+        $result = mysqli_stmt_get_result($stmt);
         $row = mysqli_fetch_assoc($result);
         $likes_count = $row['likes_count'];
-        $update_sql = "UPDATE posts SET likes_count = $likes_count WHERE id = $post_id";
-        mysqli_query($conn, $update_sql);
+        $update_sql = "UPDATE posts SET likes_count = ? WHERE id = ?";
+        $stmt = mysqli_prepare($conn, $update_sql);
+        mysqli_stmt_bind_param($stmt, "ii", $likes_count, $post_id);
+        mysqli_stmt_execute($stmt);
         return $likes_count;
     }
         

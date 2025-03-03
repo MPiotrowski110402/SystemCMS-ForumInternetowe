@@ -15,21 +15,29 @@
         if (isset($_POST['dodajPost'])) {
 
             if (isset($_POST['title']) && isset($_POST['content']) && isset($_POST['category']) && !empty($_POST['title']) && !empty($_POST['content']) && !empty($_POST['category'])) {
-                $title = $_POST['title'];
-                $content = $_POST['content'];
-                $user_id = $_SESSION['user_id'];
-                $category = $_POST['category'];
+                $title = htmlspecialchars(trim($_POST['title']));
+                $content = htmlspecialchars(trim($_POST['content']));
+                $user_id = isset($_SESSION['user_id'])?(int)$_SESSION['user_id']:0;
+                $category = isset($_POST['category']) ? (int)$_POST['category']:0;
 
 
-                $sql = "INSERT INTO posts (title, content, user_id, category_id) VALUES ('$title', '$content', '$user_id', '$category')";
-                if (mysqli_query($conn, $sql)) {
+                $sql = "INSERT INTO posts (title, content, user_id, category_id) VALUES (?,?,?,?)";
+                $stmt = mysqli_prepare($conn, $sql);
+                if(!$stmt){
+                    die("Błąd przy przygotowaniu zapytania: ". mysqli_error($conn));
+                }
+                mysqli_stmt_bind_param($stmt, "ssii", $title, $content, $user_id, $category);
+                $result = mysqli_stmt_execute($stmt);
+
+                if ($result) {
                     $post_id = mysqli_insert_id($conn);
-
+                    mysqli_stmt_close($stmt);
                     header("Location: post.php?id=" . $post_id);
                     exit(); 
                 } else {
-                    echo "Błąd podczas dodawania posta: " . mysqli_error($conn);
+                    echo "Błąd podczas dodawania posta: " . mysqli_stmt_error($stmt);
                 }
+                mysqli_stmt_close($stmt);
             } else {
                 echo "Wszystkie pola są wymagane.";
             }

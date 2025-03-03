@@ -67,43 +67,50 @@
     function profilOtherDescription(){
         if($_SESSION['logined'] === true && isset($_GET['id'])){
             global $conn;
-            $id = $_GET['id'];
-            $sql = "SELECT * FROM users WHERE id = $id";
-            $result = mysqli_query($conn,$sql);
-            $row = mysqli_fetch_assoc($result);
-            $username = $row['username'];
-            $profilePicture = $row['profile_picture'];
-            $bio = $row['bio'];
-            $status = $row['status'];
-            $createdAtFormatted = date("d-m-Y", strtotime($row['created_at']));
-        echo
-            '<div class="profile-section">
-                <img src="'.$profilePicture.'" alt="Zdjęcie profilowe" class="profile-picture">
-                <h2 class="username">'.$username.'</h2>
-                <div class="bio-container">
-                    <p class="user-bio">
-                        '.$bio.'
-                    </p>
-                </div>
-                <p class="user-status">Status: '.$status.'</p>
-            </div>
-            <div class="stats-section">
-                <h3>Statystyki konta</h3>
-                '.postCount().
-                likesProfileCount().
-                commandProfileCount().'
-                <p><strong>Data dołączenia:</strong> '.$createdAtFormatted.'</p>
-            </div>
-            <div class="posts-section">
-                <h3>Twoje posty</h3>
-                <ul class="posts-list">';
-                    postProfileList();
-        echo'   </ul>
-            </div>
-            <div class="achievements-section">
-                <h3>Osiągnięcia</h3>
-                '.osiagniecia().'
-            </div>';
+            $id = isset($_GET['id']) ? (int)$_GET['id']:0;
+            $sql = "SELECT * FROM users WHERE id = ?";
+            $stmt = mysqli_prepare($conn, $sql);
+            mysqli_stmt_bind_param($stmt, "i", $id);
+            $result = mysqli_stmt_execute($stmt);
+            if($result){
+                $result = mysqli_stmt_get_result($stmt);
+                if(mysqli_num_rows($result)>0){
+                    $row = mysqli_fetch_assoc($result);
+                    $username = $row['username'];
+                    $profilePicture = $row['profile_picture'];
+                    $bio = $row['bio'];
+                    $status = $row['status'];
+                    $createdAtFormatted = date("d-m-Y", strtotime($row['created_at']));
+                    echo
+                        '<div class="profile-section">
+                            <img src="'.$profilePicture.'" alt="Zdjęcie profilowe" class="profile-picture">
+                            <h2 class="username">'.$username.'</h2>
+                            <div class="bio-container">
+                                <p class="user-bio">
+                                    '.$bio.'
+                                </p>
+                            </div>
+                            <p class="user-status">Status: '.$status.'</p>
+                        </div>
+                        <div class="stats-section">
+                            <h3>Statystyki konta</h3>
+                            '.postCount().
+                            likesProfileCount().
+                            commandProfileCount().'
+                            <p><strong>Data dołączenia:</strong> '.$createdAtFormatted.'</p>
+                        </div>
+                        <div class="posts-section">
+                            <h3>Twoje posty</h3>
+                            <ul class="posts-list">';
+                                postProfileList();
+                    echo'   </ul>
+                        </div>
+                        <div class="achievements-section">
+                            <h3>Osiągnięcia</h3>
+                            '.osiagniecia().'
+                        </div>';
+                }
+            }
         }
     }
     //gdy lepiej poznam metodę AJAX
@@ -117,17 +124,22 @@
     function postCount(){
         global $conn;
         if(isset($_SESSION['logined']) && $_SESSION['logined'] === true && $_SESSION['user_id'] === $_GET['id']){
-            $id = $_SESSION['user_id'];
-            $sql = "SELECT COUNT(*) as posts_count FROM posts WHERE user_id = $id";
-            $result = mysqli_query($conn,$sql);
+            $id = isset($_SESSION['user_id']) ? (int)$_SESSION['user_id'] :0;
+            $sql = "SELECT COUNT(*) as posts_count FROM posts WHERE user_id = ?";
+            $stmt = mysqli_prepare($conn, $sql);
+            mysqli_stmt_bind_param($stmt, "i", $id);
+            $result = mysqli_stmt_execute($stmt);
             $row = mysqli_fetch_assoc($result);
             $postsCount = $row['posts_count'];
             return '<p><strong>Posty:</strong> '.$postsCount.'</p>';
         }else{
             if($_SESSION['logined'] === true && isset($_GET['id'])){
-                $id = $_GET['id'];
-                $sql = "SELECT COUNT(*) as posts_count FROM posts WHERE user_id = $id";
-                $result = mysqli_query($conn,$sql);
+                $id = isset($_GET['id']) ? (int)$_GET['id']:0;
+                $sql = "SELECT COUNT(*) as posts_count FROM posts WHERE user_id = ?";
+                $stmt = mysqli_prepare($conn, $sql);
+                mysqli_stmt_bind_param($stmt, "i", $id);
+                mysqli_stmt_execute($stmt);
+                $result = mysqli_stmt_get_result($stmt);
                 $row = mysqli_fetch_assoc($result);
                 $postsCount = $row['posts_count'];
                 return '<p><strong>Posty:</strong> '.$postsCount.'</p>';
@@ -137,17 +149,23 @@
     function likesProfileCount(){
         global $conn;
         if(isset($_SESSION['logined']) && $_SESSION['logined'] === true && $_SESSION['user_id'] === $_GET['id']){
-            $id = $_SESSION['user_id'];
-            $sql = "SELECT COUNT(*) as likes_count FROM likes WHERE user_id = $id";
-            $result = mysqli_query($conn,$sql);
+            $id = isset($_SESSION['user_id']) ? (int)$_SESSION['user_id'] :0;
+            $sql = "SELECT COUNT(*) as likes_count FROM likes WHERE user_id = ?";
+            $stmt = mysqli_prepare($conn, $sql);
+            mysqli_stmt_bind_param($stmt, "i", $id);
+            mysqli_stmt_execute($stmt);
+            $result = mysqli_stmt_get_result($stmt);
             $row = mysqli_fetch_assoc($result);
             $likesCount = $row['likes_count'];
             return '<p><strong>Polubienia:</strong> '.$likesCount.'</p>';
         }else{
             if($_SESSION['logined'] === true && isset($_GET['id'])){
-                $id = $_GET['id'];
-                $sql = "SELECT COUNT(*) as likes_count FROM likes WHERE user_id = $id";
-                $result = mysqli_query($conn,$sql);
+                $id = isset($_GET['id']) ? (int)$_GET['id']:0;
+                $sql = "SELECT COUNT(*) as likes_count FROM likes WHERE user_id = ?";
+                $stmt = mysqli_prepare($conn, $sql);
+                mysqli_stmt_bind_param($stmt, "i", $id);
+                mysqli_stmt_execute($stmt);
+                $result = mysqli_stmt_get_result($stmt);
                 $row = mysqli_fetch_assoc($result);
                 $likesCount = $row['likes_count'];
                 return '<p><strong>Polubienia:</strong> '.$likesCount.'</p>';
@@ -157,29 +175,38 @@
     function commandProfileCount(){
         global $conn;
         if(isset($_SESSION['logined']) && $_SESSION['logined'] === true && $_SESSION['user_id'] === $_GET['id']){
-            $id = $_SESSION['user_id'];
-            $sql = "SELECT COUNT(*) as comments_count FROM comments WHERE user_id = $id";
-            $result = mysqli_query($conn,$sql);
+            $id = isset($_SESSION['user_id']) ? (int)$_SESSION['user_id'] :0;
+            $sql = "SELECT COUNT(*) as comments_count FROM comments WHERE user_id = ?";
+            $stmt = mysqli_prepare($conn, $sql);
+            mysqli_stmt_bind_param($stmt, "i", $id);
+            mysqli_stmt_execute($stmt);
+            $result = mysqli_stmt_get_result($stmt);
             $row = mysqli_fetch_assoc($result);
             $commentsCount = $row['comments_count'];
             return '<p><strong>Komentarze:</strong> '.$commentsCount.'</p>';
         }else{
             if($_SESSION['logined'] === true && isset($_GET['id'])){
-                $id = $_GET['id'];
-                $sql = "SELECT COUNT(*) as likes_count FROM likes WHERE user_id = $id";
-                $result = mysqli_query($conn,$sql);
+                $id = isset($_GET['id']) ? (int)$_GET['id']:0;
+                $sql = "SELECT COUNT(*) as comments_count FROM comments WHERE user_id = ?";
+                $stmt = mysqli_prepare($conn, $sql);
+                mysqli_stmt_bind_param($stmt, "i", $id);
+                mysqli_stmt_execute($stmt);
+                $result = mysqli_stmt_get_result($stmt);
                 $row = mysqli_fetch_assoc($result);
-                $likesCount = $row['likes_count'];
-                return '<p><strong>Polubienia:</strong> '.$likesCount.'</p>';
+                $commentsCount = $row['comments_count'];
+                return '<p><strong>komentarze:</strong> '.$commentsCount.'</p>';
             }
         }
     };
     function postProfileList(){
         global $conn;
         if(isset($_SESSION['logined']) && $_SESSION['logined'] === true ){
-            $id = $_GET['id'];
-            $sql = "SELECT * FROM posts WHERE user_id = $id ORDER BY created_at DESC";
-            $result = mysqli_query($conn,$sql);
+            $id = isset($_GET['id']) ? (int)$_GET['id']:0;
+            $sql = "SELECT * FROM posts WHERE user_id = ? ORDER BY created_at DESC";
+            $stmt = mysqli_prepare($conn, $sql);
+            mysqli_stmt_bind_param($stmt, "i", $id);
+            mysqli_stmt_execute($stmt);
+            $result = mysqli_stmt_get_result($stmt);
             if(mysqli_num_rows($result) > 0) {
                 while($row = mysqli_fetch_assoc($result)) {
                     $postId = $row['id'];
@@ -205,10 +232,13 @@
     function osiagniecia(){
         global $conn;
         if(isset($_SESSION['logined']) && $_SESSION['logined'] === true ){
-            $id = $_GET['id'];
+            $id = isset($_GET['id']) ? (int)$_GET['id']:0;
             $dateFiveYearsAgo = date("Y-m-d", strtotime("-5 years"));
-            $sql = "SELECT created_at FROM users WHERE id = $id";
-            $result = mysqli_query($conn, $sql);
+            $sql = "SELECT created_at FROM users WHERE id = ?";
+            $stmt = mysqli_prepare($conn, $sql);
+            mysqli_stmt_bind_param($stmt, "i", $id);
+            mysqli_stmt_execute($stmt);
+            $result = mysqli_stmt_get_result($stmt);
             if($result && mysqli_num_rows($result) > 0) {
                 $row = mysqli_fetch_assoc($result);
                 $createdAtFormatted = date("Y-m-d", strtotime($row['created_at']));
@@ -219,8 +249,11 @@
                 }
             }
 
-            $sql = "SELECT likes_count FROM posts WHERE user_id = $id";
-            $result = mysqli_query($conn, $sql);
+            $sql = "SELECT likes_count FROM posts WHERE user_id = ?";
+            $stmt = mysqli_prepare($conn, $sql);
+            mysqli_stmt_bind_param($stmt, "i", $id);
+            mysqli_stmt_execute($stmt);
+            $result = mysqli_stmt_get_result($stmt);
             if($result && mysqli_num_rows($result) > 0) {
                 $row = mysqli_fetch_assoc($result);
                 if($row['likes_count'] >= 100){
@@ -232,8 +265,11 @@
                 $likesResult = '<p><s>🔥 100 polubień w jednym poście</s></p>';
             }
 
-            $sql = "SELECT COUNT(*) as comments_count FROM comments WHERE user_id = $id";
-            $result = mysqli_query($conn, $sql);
+            $sql = "SELECT COUNT(*) as comments_count FROM comments WHERE user_id = ?";
+            $stmt = mysqli_prepare($conn, $sql);
+            mysqli_stmt_bind_param($stmt, "i", $id);
+            mysqli_stmt_execute($stmt);
+            $result = mysqli_stmt_get_result($stmt);
             if(mysqli_num_rows($result) > 0) {
                 $row = mysqli_fetch_assoc($result);
                 if($row['comments_count'] >= 50){
@@ -248,10 +284,13 @@
         }
     }
     if(isset($_POST['btn_post_del'])){
-        $id = $_POST['post_id'];
-        $sql = "DELETE FROM posts WHERE id = '$id'";
-        if (mysqli_query($conn, $sql)) {
-            header('Location: profil.php?id='.$_SESSION['user_id']);
+        $id = isset($_POST['post_id'])? (int)$_POST['post_id']:0;
+        $sessionId = isset($_SESSION['user_id'])? (int)$_SESSION['user_id']:0;
+        $sql = "DELETE FROM posts WHERE id = ?";
+        $stmt = mysqli_prepare($conn, $sql);
+        mysqli_stmt_bind_param($stmt, "i", $id);
+        if (mysqli_stmt_execute($stmt)) {
+            header('Location: profil.php?id='.$sessionId);
             exit();
         } else {
             echo "Error deleting record: ". mysqli_error($conn);

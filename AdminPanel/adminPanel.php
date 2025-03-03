@@ -196,7 +196,8 @@ if (isset($_GET['page'])) {
 
     function postsList() {
         global $conn;
-        $sql = "SELECT posts.id, posts.title, users.username, posts.created_at FROM posts INNER JOIN users ON posts.user_id = users.id";
+        $sql = "SELECT posts.id, posts.title, users.username, posts.created_at
+        FROM posts INNER JOIN users ON posts.user_id = users.id";
         $result = mysqli_query($conn, $sql);
         $output = '';
         if(mysqli_num_rows($result)>0){

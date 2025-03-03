@@ -10,42 +10,44 @@
             echo "Proszę wypełnić wszystkie pola!";
             return;
         }
-        $username = $_POST['login_input'];
+        $username = trim($_POST['login_input']);
         $password = $_POST['password_input'];
-        $sql = "SELECT id, username, password,email,created_at, role, status, last_login, profile_picture, bio FROM users WHERE username = '$username'";
-        $result = mysqli_query($conn,$sql);
+
+        $sql = "SELECT id, username, password,email,created_at, role, status, last_login, profile_picture, bio FROM users WHERE username = ?";
+        $stmt = mysqli_prepare($conn, $sql);
+        if(!$stmt){
+            die("Error: ".mysqli_error($conn));
+        }
+        
+        mysqli_stmt_bind_param($stmt, "s", $username);
+        $execute = mysqli_stmt_execute($stmt);
+        if(!$execute){
+            die("Error: ".mysqli_error($conn));
+        }
+        $result = mysqli_stmt_get_result($stmt);
 
         if(mysqli_num_rows($result)>0){
             if($row = mysqli_fetch_assoc($result)){
-                $username_input = $row['username'];
-                $password_input = $row['password'];
-                if($username == $username_input){
-                    if($password == $password_input){
-                        $_SESSION['logined'] = true;
-                        $_SESSION['username'] = $row['username'];
-                        $_SESSION['password'] = $row['password'];
-                        $_SESSION['user_id'] = $row['id'];
-                        $_SESSION['email'] = $row['email'];
-                        $_SESSION['created_at'] = $row['created_at'];
-                        $_SESSION['status'] = $row['status'];
-                        $_SESSION['last_login'] = $row['last_login'];
-                        $_SESSION['profile_picture'] = $row['profile_picture'];
-                        $_SESSION['bio'] = $row['bio'];
-                        if($row['role'] == 'admin'){
-                            $_SESSION['role'] = 'admin';
-                        }
-                        else{
-                            $_SESSION['role'] = 'user';
-                        }
-                        header("Location: index.php");
-                        exit();
-                    }else{
-                        echo "Podane hasło jest błędne";
-                    }
+                if(password_verify($password, $row['password'])){
+                    $_SESSION['logined'] = true;
+                    $_SESSION['username'] = $row['username'];
+                    $_SESSION['user_id'] = $row['id'];
+                    $_SESSION['email'] = $row['email'];
+                    $_SESSION['created_at'] = $row['created_at'];
+                    $_SESSION['status'] = $row['status'];
+                    $_SESSION['last_login'] = $row['last_login'];
+                    $_SESSION['profile_picture'] = $row['profile_picture'];
+                    $_SESSION['bio'] = $row['bio'];
+                    $_SESSION['role'] = $row['role'];
+                    
+                    header("Location: index.php");
+                    exit();
                 }else{
-                    echo "Użytkownik o podanym loginie nie istnieje";
+                    echo "Podane hasło jest błędne";
                 }
             }
+        }else{
+            echo "Nie znaleziono użytkownika";
         }
     }
 ?>
